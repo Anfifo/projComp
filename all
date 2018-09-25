@@ -1,0 +1,13 @@
+#!/bin/bash
+make clean
+make all
+for f in ../tests/*.gr8
+do echo "testing file $f"
+   g="${f/.gr8/}"
+   h="${g/"../tests/"/}"
+   ./gr8 $g.gr8
+   yasm -felf -o $g.o $g.asm
+   ld -m elf_i386 -o $g $g.o -lrts
+   diff -s -w -b -B -E ../tests/expected/$h.out <(./$g)
+done
+./clean.sh
